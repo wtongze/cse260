@@ -1,24 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import { Canvas, useLoader } from '@react-three/fiber';
+import { OrbitControls, Stats } from '@react-three/drei';
+import { Euler } from 'three';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import './App.css';
+import { degToRad } from 'three/src/math/MathUtils';
+
+function Human() {
+  const obj = useLoader(OBJLoader, '/SPRING0001.obj');
+
+  const human = obj.children[0];
+  human.setRotationFromEuler(new Euler(degToRad(-90), 0, 0));
+  console.log(human);
+
+  return (
+    <>
+      <scene>
+        <directionalLight position={[1, 0, 1]} intensity={0.8} />
+        <directionalLight position={[-1, 0, 0]} intensity={0.8} />
+        <directionalLight position={[1, 0, -1]} intensity={0.5} />
+        <mesh {...human}>
+          <meshPhongMaterial color={'gray'} />
+        </mesh>
+      </scene>
+    </>
+  );
+}
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div id="convas-container" style={{ height: '100vh' }}>
+        <Canvas camera={{ fov: 75, near: 0.1, far: 1000, position: [0, 0, 2] }}>
+          <Human />
+          <OrbitControls />
+          <Stats />
+        </Canvas>
+      </div>
     </div>
   );
 }
