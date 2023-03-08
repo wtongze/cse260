@@ -1,3 +1,9 @@
 body {
   margin: 0;
 }
+
+.stats {
+  position: absolute !important;
+  top: unset !important;
+  bottom: 0;
+}
