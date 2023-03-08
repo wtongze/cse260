@@ -21,10 +21,8 @@ function Human() {
   const position2 = human2.geometry.attributes.position as BufferAttribute;
 
   const base = useMemo(() => {
-    // @ts-ignore
-    return [...position1.array];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    return [...(position1.array as number[])];
+  }, [position1]);
 
   const diffArray = useMemo(() => {
     const temp = [];
@@ -32,8 +30,7 @@ function Human() {
       temp.push(position2.array[i] - position1.array[i]);
     }
     return temp;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [position1, position2]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -47,13 +44,12 @@ function Human() {
       clearInterval(timer);
     };
   }, [current]);
-  // console.log(current);
 
   human1.setRotationFromEuler(new Euler(degToRad(-90), 0, 0));
 
-  for (let i = 0; i < position1.array.length; i += 1) {
-    // @ts-ignore
-    position1.array[i] = base[i] + (diffArray[i] / STEP) * current;
+  const pointArray = position1.array as number[];
+  for (let i = 0; i < pointArray.length; i += 1) {
+    pointArray[i] = base[i] + (diffArray[i] / STEP) * current;
   }
   position1.needsUpdate = true;
 
@@ -98,9 +94,8 @@ function App() {
         <button
           onClick={() => {
             const modelMesh = three?.scene.children[0].children[3]!;
-            console.log(modelMesh);
             const exporter = new GLTFExporter();
-            const fileName = 'model.gltf';
+            const fileName = 'model.obj';
             exporter.parse(
               modelMesh,
               (gltf) => {
