@@ -1,8 +1,8 @@
-import { Canvas, useLoader } from '@react-three/fiber';
+import { Canvas, RootState, useLoader } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei';
 import { BufferAttribute, Euler, Mesh } from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-// import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 import './App.css';
 import { degToRad } from 'three/src/math/MathUtils';
 import { Suspense, useEffect, useMemo, useState } from 'react';
@@ -73,20 +73,53 @@ function Human() {
   );
 }
 
+function download(content: Blob, fileName: string) {
+  let element = document.createElement('a');
+  element.setAttribute('href', URL.createObjectURL(content));
+  element.setAttribute('download', fileName);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
 function App() {
+  const [three, setThree] = useState<RootState>();
+
   return (
     <div
       className="App"
       style={{ height: '100vh', display: 'flex', flexFlow: 'column' }}
     >
       <div>
-        <button>Download</button>
+        <button
+          onClick={() => {
+            const modelMesh = three?.scene.children[0].children[3]!;
+            console.log(modelMesh);
+            const exporter = new GLTFExporter();
+            const fileName = 'model.gltf';
+            exporter.parse(
+              modelMesh,
+              (gltf) => {
+                const modelFile = new Blob([JSON.stringify(gltf)]);
+                download(modelFile, fileName);
+              },
+              console.error
+            );
+          }}
+        >
+          Download
+        </button>
       </div>
 
       <div id="convas-container" style={{ flexGrow: 1 }}>
         <Canvas
           camera={{ position: [0, 0, 2] }}
           gl={{ preserveDrawingBuffer: true }}
+          onCreated={setThree}
         >
           <Human />
           <OrbitControls />
