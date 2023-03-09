@@ -1,12 +1,14 @@
 import { useLoader } from '@react-three/fiber';
-import { useMemo, Suspense } from 'react';
-import { Mesh, BufferAttribute, Euler } from 'three';
+import { useMemo } from 'react';
+import { Mesh, BufferAttribute, Euler, MeshPhongMaterial } from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { degToRad } from 'three/src/math/MathUtils';
 
 const STEP = 100;
 
 type Props = {
+  rotation?: number[];
+  position?: number[];
   delta: number;
   base: string;
   target: string;
@@ -36,7 +38,14 @@ export function Human(props: Props) {
     return temp;
   }, [position1, position2]);
 
-  human1.setRotationFromEuler(new Euler(degToRad(-90), 0, 0));
+  if (props.rotation) {
+    human1.setRotationFromEuler(new Euler(...props.rotation.map(degToRad)));
+  }
+
+  if (props.position) {
+    const [x, y, z] = props.position;
+    human1.position.set(x, y, z);
+  }
 
   const pointArray = position1.array as number[];
   for (let i = 0; i < pointArray.length; i += 1) {
@@ -44,17 +53,15 @@ export function Human(props: Props) {
   }
   position1.needsUpdate = true;
 
+  human1.material = new MeshPhongMaterial({color: 'gray'});
+
   return (
     <>
       <scene>
         <directionalLight position={[1, 0, 1]} intensity={0.8} />
         <directionalLight position={[-1, 0, 0]} intensity={0.8} />
         <directionalLight position={[1, 0, -1]} intensity={0.5} />
-        <Suspense fallback={null}>
-          <mesh {...human1}>
-            <meshPhongMaterial color={'gray'} />
-          </mesh>
-        </Suspense>
+        <mesh {...human1} children={null} />
       </scene>
     </>
   );

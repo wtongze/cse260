@@ -40,19 +40,23 @@ export enum Model {
 
 const modelData = {
   [Model.BodyModel]: {
+    rotation: [-90, 0, 0],
+    position: [0, 0, 0],
     base: '/SPRING0002.obj',
     target: '/SPRING0001.obj',
   },
   [Model.SCAPE]: {
-    base: '/SPRING0002.obj',
-    target: '/SPRING0001.obj',
+    rotation: [0, -135, 90],
+    position: [0, -1, 0],
+    base: '/scape2.obj',
+    target: '/scape1.obj',
   },
 };
 
 function App() {
   const drawerWidth = 320;
   const [three, setThree] = useState<RootState>();
-  const [currentModel, setCurrentModel] = useState(Model.BodyModel);
+  const [currentModel, setCurrentModel] = useState(Model.SCAPE);
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const [drawer, setDrawer] = useState(isDesktop);
@@ -191,7 +195,7 @@ function App() {
               <SettingsIcon
                 style={{ verticalAlign: 'middle', marginRight: 8 }}
               />
-              Weight
+              Delta
             </Typography>
             <div style={{ padding: '0 16px 0' }}>
               <Slider
