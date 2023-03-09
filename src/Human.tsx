@@ -1,15 +1,22 @@
 import { useLoader } from '@react-three/fiber';
-import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useMemo, Suspense } from 'react';
 import { Mesh, BufferAttribute, Euler } from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { degToRad } from 'three/src/math/MathUtils';
 
 const STEP = 100;
 
-export function Human() {
-  const [current, setCurrent] = useState(0);
-  const obj1 = useLoader(OBJLoader, '/SPRING0001.obj');
-  const obj2 = useLoader(OBJLoader, '/SPRING0002.obj');
+type Props = {
+  delta: number;
+  base: string;
+  target: string;
+};
+
+export function Human(props: Props) {
+  const { delta: current } = props;
+
+  const obj1 = useLoader(OBJLoader, props.base);
+  const obj2 = useLoader(OBJLoader, props.target);
 
   const human1 = obj1.children[0] as Mesh;
   const human2 = obj2.children[0] as Mesh;
@@ -28,19 +35,6 @@ export function Human() {
     }
     return temp;
   }, [position1, position2]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (current < STEP) {
-        setCurrent(current + 1);
-      } else {
-        setCurrent(0);
-      }
-    }, 20);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [current]);
 
   human1.setRotationFromEuler(new Euler(degToRad(-90), 0, 0));
 
