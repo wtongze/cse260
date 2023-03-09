@@ -5,5 +5,7 @@ body {
 .stats {
   position: absolute !important;
   top: unset !important;
+  left: unset !important;
   bottom: 0;
+  right: 0;
 }
