@@ -21,6 +21,7 @@ import {
   Button,
 } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2';
+import InfoIcon from '@mui/icons-material/InfoOutlined';
 import ModelIcon from '@mui/icons-material/AccessibilityNew';
 import DownloadIcon from '@mui/icons-material/Download';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -28,7 +29,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { ModelCard } from './ModelCard';
 
 enum Format {
-  glTF = 'gltf',
+  gltf = 'gltf',
   ply = 'ply',
   obj = 'obj',
 }
@@ -41,28 +42,28 @@ export enum Model {
 const modelData = {
   [Model.BodyModel]: {
     rotation: [-90, 0, 0],
-    position: [0, 0, 0],
-    base: '/SPRING0002.obj',
-    target: '/SPRING0001.obj',
+    position: [-0.075, 0, 0],
+    base: '/body1.obj',
+    target: '/body2.obj',
   },
   [Model.SCAPE]: {
     rotation: [0, -135, 90],
-    position: [0, -1, 0],
-    base: '/scape2.obj',
-    target: '/scape1.obj',
+    position: [0.125, -1, 0],
+    base: '/scape1.obj',
+    target: '/scape2.obj',
   },
 };
 
 function App() {
   const drawerWidth = 320;
   const [three, setThree] = useState<RootState>();
-  const [currentModel, setCurrentModel] = useState(Model.SCAPE);
+  const [currentModel, setCurrentModel] = useState(Model.BodyModel);
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const [drawer, setDrawer] = useState(isDesktop);
   const topbarRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [sliderVal, setSliderVal] = useState(50);
+  const [sliderVal, setSliderVal] = useState(0);
 
   function resize() {
     if (topbarRef.current && canvasRef.current) {
@@ -88,15 +89,20 @@ function App() {
     window.addEventListener('resize', resize);
   });
 
-  const downloadModel = async (format: Format) => {
+  const downloadModel = (format: Format) => {
     const modelMesh = three?.scene.children[0].children[3]!;
 
     const fileName = `model.${format}`;
     switch (format) {
-      case Format.glTF:
+      case Format.gltf:
         const gltfExporter = new GLTFExporter();
-        const gltf = await gltfExporter.parseAsync(modelMesh);
-        download(new Blob([JSON.stringify(gltf)]), fileName);
+        gltfExporter.parse(
+          modelMesh,
+          (gltf) => {
+            download(new Blob([JSON.stringify(gltf)]), fileName);
+          },
+          console.error
+        );
         break;
       case Format.obj:
         const objExporter = new OBJExporter();
@@ -136,9 +142,23 @@ function App() {
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant="h6" color="inherit" component="div">
+          <Typography
+            variant="h6"
+            color="inherit"
+            component="div"
+            sx={{ flexGrow: 1 }}
+          >
             CSE 260
           </Typography>
+          <Button
+            color="inherit"
+            sx={{ px: 2 }}
+            href="https://github.com/wtongze/cse260"
+            target="_blank"
+            startIcon={<InfoIcon />}
+          >
+            About
+          </Button>
         </Toolbar>
       </AppBar>
 
@@ -179,6 +199,7 @@ function App() {
               onClick={() => {
                 setCurrentModel(Model.BodyModel);
               }}
+              href={'https://graphics.soe.ucsc.edu/data/BodyModels/index.html'}
             />
             <ModelCard
               title="SCAPE"
@@ -187,10 +208,12 @@ function App() {
               onClick={() => {
                 setCurrentModel(Model.SCAPE);
               }}
+              href={
+                'https://graphics.soe.ucsc.edu/private/data/SCAPE/index.html'
+              }
             />
           </div>
-
-          <div style={{ flexGrow: 1, marginTop: 16 }}>
+          <div style={{ margin: '16px 0' }}>
             <Typography sx={{ mb: 1 }} fontWeight={500}>
               <SettingsIcon
                 style={{ verticalAlign: 'middle', marginRight: 8 }}
@@ -208,7 +231,7 @@ function App() {
               />
             </div>
           </div>
-          <div>
+          <div style={{ margin: '16px 0' }}>
             <Typography sx={{ mb: 1 }} fontWeight={500}>
               <DownloadIcon
                 style={{ verticalAlign: 'middle', marginRight: 8 }}
@@ -223,7 +246,6 @@ function App() {
                 {Object.keys(Format).map((i) => (
                   <Button
                     key={i}
-                    color="inherit"
                     onClick={() => {
                       downloadModel(i as Format);
                     }}

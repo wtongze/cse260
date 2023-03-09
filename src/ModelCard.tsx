@@ -4,15 +4,17 @@ import {
   CardContent,
   Typography,
   ButtonBase,
+  IconButton,
 } from '@mui/material';
-import { PropsWithoutRef } from 'react';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-type Props = PropsWithoutRef<{
+type Props = {
   title: string;
   src: string;
+  href: string;
   selected?: boolean;
   onClick?: () => void;
-}>;
+};
 
 export function ModelCard(props: Props) {
   const { selected = false } = props;
@@ -25,18 +27,32 @@ export function ModelCard(props: Props) {
       <Card
         sx={{
           padding: 2,
-          border: selected ? '2px solid #868e96' : '2px solid #dee2e6',
+          border: selected ? '2px solid #1976d2' : '2px solid #dee2e6',
           borderRadius: 2,
         }}
-        elevation={0}
+        elevation={selected ? 1 : 0}
       >
         <CardMedia
           sx={{ height: 100, backgroundSize: 'contain' }}
           image={props.src}
           title={props.title}
         />
-        <CardContent style={{ padding: '8px 8px 0' }}>
+        <CardContent
+          style={{
+            padding: '0 8px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <Typography component="div">{props.title}</Typography>
+          <IconButton
+            href={props.href}
+            target="_blank"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <OpenInNewIcon />
+          </IconButton>
         </CardContent>
       </Card>
     </ButtonBase>
