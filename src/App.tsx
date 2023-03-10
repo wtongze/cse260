@@ -268,7 +268,7 @@ function App() {
                   value={idx}
                   onClick={() => setCurrentModel(idx)}
                 >
-                  Preset {idx}
+                  Preset {idx + 1}
                 </MenuItem>
               ))}
             </Select>
