@@ -9,3 +9,8 @@ body {
   bottom: 0;
   right: 0;
 }
+
+fieldset {
+  border: none !important;
+  outline: none !important;
+}

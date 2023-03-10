@@ -19,13 +19,15 @@ import {
   Box,
   Slider,
   Button,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2';
-import InfoIcon from '@mui/icons-material/InfoOutlined';
 import ModelIcon from '@mui/icons-material/AccessibilityNew';
 import DownloadIcon from '@mui/icons-material/Download';
 import MenuIcon from '@mui/icons-material/Menu';
-import SettingsIcon from '@mui/icons-material/Settings';
+import DeltaIcon from '@mui/icons-material/ChangeHistory';
+import DatasetIcon from '@mui/icons-material/DataObject';
 import { ModelCard } from './ModelCard';
 
 enum Format {
@@ -40,24 +42,47 @@ export enum Model {
 }
 
 const modelData = {
-  [Model.BodyModel]: {
-    rotation: [-90, 0, 0],
-    position: [-0.075, 0, 0],
-    base: '/body1.obj',
-    target: '/body2.obj',
-  },
-  [Model.SCAPE]: {
-    rotation: [0, -135, 90],
-    position: [0.125, -1, 0],
-    base: '/scape1.obj',
-    target: '/scape2.obj',
-  },
+  [Model.BodyModel]: [
+    {
+      rotation: [-90, 0, 0],
+      position: [-0.075, 0, 0],
+      base: '/bodymodel/male1.obj',
+      target: '/bodymodel/male2.obj',
+    },
+    {
+      rotation: [-90, 0, 0],
+      position: [-0.075, 0, 0],
+      base: '/bodymodel/female1.obj',
+      target: '/bodymodel/female2.obj',
+    },
+  ],
+  [Model.SCAPE]: [
+    {
+      rotation: [0, -135, 90],
+      position: [0.125, -1, 0],
+      base: '/scape/mesh000.obj',
+      target: '/scape/mesh002.obj',
+    },
+    {
+      rotation: [0, 45, 90],
+      position: [0.125, -1, 0],
+      base: '/scape/mesh049.obj',
+      target: '/scape/mesh050.obj',
+    },
+    {
+      rotation: [0, -45, 90],
+      position: [0.125, -0.5, 0],
+      base: '/scape/mesh069.obj',
+      target: '/scape/mesh070.obj',
+    },
+  ],
 };
 
 function App() {
   const drawerWidth = 320;
   const [three, setThree] = useState<RootState>();
-  const [currentModel, setCurrentModel] = useState(Model.BodyModel);
+  const [currentDataSet, setCurrentDataSet] = useState(Model.BodyModel);
+  const [currentModel, setCurrentModel] = useState(0);
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const [drawer, setDrawer] = useState(isDesktop);
@@ -150,15 +175,6 @@ function App() {
           >
             CSE 260
           </Typography>
-          <Button
-            color="inherit"
-            sx={{ px: 2 }}
-            href="https://github.com/wtongze/cse260"
-            target="_blank"
-            startIcon={<InfoIcon />}
-          >
-            About
-          </Button>
         </Toolbar>
       </AppBar>
 
@@ -189,24 +205,32 @@ function App() {
         >
           <div>
             <Typography sx={{ mb: 1 }} fontWeight={500}>
-              <ModelIcon style={{ verticalAlign: 'middle', marginRight: 8 }} />
-              Model
+              <DatasetIcon
+                style={{
+                  verticalAlign: 'middle',
+                  marginRight: 8,
+                  marginBottom: 2,
+                }}
+              />
+              Data Set
             </Typography>
             <ModelCard
               title="Body Model"
               src="/body.jpg"
-              selected={currentModel === Model.BodyModel}
+              selected={currentDataSet === Model.BodyModel}
               onClick={() => {
-                setCurrentModel(Model.BodyModel);
+                setCurrentDataSet(Model.BodyModel);
+                setCurrentModel(0);
               }}
               href={'https://graphics.soe.ucsc.edu/data/BodyModels/index.html'}
             />
             <ModelCard
               title="SCAPE"
               src="/scape.png"
-              selected={currentModel === Model.SCAPE}
+              selected={currentDataSet === Model.SCAPE}
               onClick={() => {
-                setCurrentModel(Model.SCAPE);
+                setCurrentDataSet(Model.SCAPE);
+                setCurrentModel(0);
               }}
               href={
                 'https://graphics.soe.ucsc.edu/private/data/SCAPE/index.html'
@@ -215,8 +239,48 @@ function App() {
           </div>
           <div style={{ margin: '16px 0' }}>
             <Typography sx={{ mb: 1 }} fontWeight={500}>
-              <SettingsIcon
-                style={{ verticalAlign: 'middle', marginRight: 8 }}
+              <ModelIcon
+                style={{
+                  verticalAlign: 'middle',
+                  marginRight: 8,
+                  marginBottom: 2,
+                }}
+              />
+              Model
+            </Typography>
+            <Select
+              value={currentModel}
+              fullWidth
+              color="primary"
+              sx={{
+                [`& .MuiSelect-select`]: {
+                  border: '2px solid #dee2e6',
+                  borderRadius: '8px !important',
+                },
+                [`&:active`]: {
+                  borderRadius: '8px !important',
+                },
+              }}
+            >
+              {modelData[currentDataSet].map((i, idx) => (
+                <MenuItem
+                  key={i.base}
+                  value={idx}
+                  onClick={() => setCurrentModel(idx)}
+                >
+                  Preset {idx}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
+          <div style={{ margin: '16px 0' }}>
+            <Typography sx={{ mb: 1 }} fontWeight={500}>
+              <DeltaIcon
+                style={{
+                  verticalAlign: 'middle',
+                  marginRight: 8,
+                  marginBottom: 2,
+                }}
               />
               Delta
             </Typography>
@@ -277,7 +341,10 @@ function App() {
             style={{ margin: '0 auto' }}
             ref={canvasRef}
           >
-            <Human delta={sliderVal} {...modelData[currentModel]} />
+            <Human
+              delta={sliderVal}
+              {...modelData[currentDataSet][currentModel]}
+            />
             <OrbitControls />
             <Stats className="stats" />
           </Canvas>

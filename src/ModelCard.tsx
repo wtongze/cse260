@@ -26,7 +26,8 @@ export function ModelCard(props: Props) {
     >
       <Card
         sx={{
-          padding: 2,
+          px: 2,
+          py: 1,
           border: selected ? '2px solid #1976d2' : '2px solid #dee2e6',
           borderRadius: 2,
         }}
