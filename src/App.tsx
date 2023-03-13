@@ -183,7 +183,7 @@ function App() {
             sx={{ px: 2 }}
             startIcon={<LinkIcon />}
           >
-            Github
+            Source Code
           </Button>
         </Toolbar>
       </AppBar>
