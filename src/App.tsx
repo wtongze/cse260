@@ -28,6 +28,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MenuIcon from '@mui/icons-material/Menu';
 import DeltaIcon from '@mui/icons-material/ChangeHistory';
 import DatasetIcon from '@mui/icons-material/DataObject';
+import LinkIcon from '@mui/icons-material/OpenInNew';
 import { ModelCard } from './ModelCard';
 
 enum Format {
@@ -175,6 +176,15 @@ function App() {
           >
             CSE 260
           </Typography>
+          <Button
+            color="inherit"
+            href="https://github.com/wtongze/cse260"
+            target="_blank"
+            sx={{ px: 2 }}
+            startIcon={<LinkIcon />}
+          >
+            Github
+          </Button>
         </Toolbar>
       </AppBar>
 
