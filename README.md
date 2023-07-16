@@ -2,7 +2,7 @@
 
 ![Demo](./public/demo.gif)
 
-This project was built for the *CSE 260: Computer Graphics* class I am currently taking to allow users to make customizations on existing baseline models, build and aquire a new model in different format (glTF, OBJ, PLY).
+This project was built for the *CSE 260: Computer Graphics* class I am currently taking to allow users to make customizations on existing baseline models, build and acquire a new model in different format (glTF, OBJ, PLY).
 
 Internally, it uses a linear algorithm to alter the existing baseline models. All of the calculations are made within the browser.
 
